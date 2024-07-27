@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./requirements/nginx
+    ports:
+      - "443:443"
+    volumes:
+      - wordpressdata:/var/www/html
+    networks:
+      - inception
+    restart: always
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+    environment:
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      AUTH_KEY: ${AUTH_KEY}
+      SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
+      LOGGED_IN_KEY: ${LOGGED_IN_KEY}
+      NONCE_KEY: ${NONCE_KEY}
+    volumes:
+      - wordpressdata:/var/www/html
+    networks:
+      - inception
+    restart: always
+
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - mariadbdata:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  mariadbdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rjeong/data/mysql
+      o: bind
+  wordpressdata:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rjeong/data/wordpress
+      o: bind
