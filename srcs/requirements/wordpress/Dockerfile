@@ -20,6 +20,9 @@ COPY conf/wp-config.php /var/www/html/wp-config.php
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
+# Modify php-fpm configuration to listen on port 9000
+RUN sed -i 's/\/run\/php\/php7.4-fpm.sock/0.0.0.0:9000/g' /etc/php/7.4/fpm/pool.d/www.conf
+
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
