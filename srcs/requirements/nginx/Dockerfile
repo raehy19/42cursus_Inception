@@ -1,9 +1,10 @@
 # Use the penultimate stable version of Debian
 FROM debian:bullseye
 
-# Install NGINX and OpenSSL for TLS
+# Install Tini, NGINX, and OpenSSL for TLS
 RUN apt-get update && \
-    apt-get install -y nginx openssl
+    apt-get install -y --no-install-recommends tini nginx openssl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Remove default server definition
 RUN rm /etc/nginx/sites-enabled/default
@@ -21,6 +22,9 @@ COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 443 for HTTPS
 EXPOSE 443
+
+# Use Tini as the init system
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Command to run NGINX
 CMD ["nginx", "-g", "daemon off;"]

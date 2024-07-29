@@ -10,6 +10,8 @@ services:
       - wordpressdata:/var/www/html
     networks:
       - inception
+    env_file:
+      - .env
     restart: always
 
   wordpress:
@@ -24,10 +26,16 @@ services:
       SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
       LOGGED_IN_KEY: ${LOGGED_IN_KEY}
       NONCE_KEY: ${NONCE_KEY}
+      AUTH_SALT: ${AUTH_SALT}
+      SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
+      LOGGED_IN_SALT: ${LOGGED_IN_SALT}
+      NONCE_SALT: ${NONCE_SALT}
     volumes:
       - wordpressdata:/var/www/html
     networks:
       - inception
+    env_file:
+      - .env
     restart: always
 
   mariadb:
@@ -42,6 +50,8 @@ services:
       - mariadbdata:/var/lib/mysql
     networks:
       - inception
+    env_file:
+      - .env
     restart: always
 
 networks:
@@ -53,11 +63,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/rjeong/data/mysql
+#      device: /home/rjeong/data/mysql
+      device: /Users/raehyeon/data/mysql
       o: bind
   wordpressdata:
     driver: local
     driver_opts:
       type: none
-      device: /home/rjeong/data/wordpress
+#      device: /home/rjeong/data/wordpress
+      device: /Users/raehyeon/data/wordpress
       o: bind

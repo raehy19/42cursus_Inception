@@ -10,11 +10,21 @@
 #                                                                              #
 # **************************************************************************** #
 
+all: up
+
 up:
 	docker-compose -f srcs/docker-compose.yml up --build
 
 down:
 	docker-compose -f srcs/docker-compose.yml down
 
+clean:
+	docker-compose -f srcs/docker-compose.yml down -v
 
-.PHONY: up down
+re: clean
+	make up
+
+debug:
+	COMPOSE_HTTP_TIMEOUT=200 DEBUG=1 docker-compose -f srcs/docker-compose.yml up --build
+
+.PHONY: all up down clean re debug
