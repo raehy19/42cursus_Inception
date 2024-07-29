@@ -7,7 +7,7 @@
 : "${DB_ROOT_PWD:?Need to set DB_ROOT_PWD}"
 
 # Run only if the MySQL database is being initialized for the first time
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+if [ ! -d "/var/lib/mysql/$DB_NAME" ]; then
 
     # Initialize the MySQL data directory
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
