@@ -14,6 +14,22 @@ services:
       - .env
     restart: always
 
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PWD: ${DB_PWD}
+      DB_ROOT_PWD: ${DB_ROOT_PWD}
+    volumes:
+      - mariadbdata:/var/lib/mysql
+    networks:
+      - inception
+    env_file:
+      - .env
+    restart: always
+
   wordpress:
     build:
       context: ./requirements/wordpress
@@ -38,22 +54,6 @@ services:
       - .env
     restart: always
 
-  mariadb:
-    build:
-      context: ./requirements/mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
-      MYSQL_USER: ${WORDPRESS_DB_USER}
-      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-    volumes:
-      - mariadbdata:/var/lib/mysql
-    networks:
-      - inception
-    env_file:
-      - .env
-    restart: always
-
 networks:
   inception:
     driver: bridge
@@ -63,13 +63,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-#      device: /home/rjeong/data/mysql
+      #      device: /home/rjeong/data/mysql
       device: /Users/raehyeon/data/mysql
       o: bind
   wordpressdata:
     driver: local
     driver_opts:
       type: none
-#      device: /home/rjeong/data/wordpress
+      #      device: /home/rjeong/data/wordpress
       device: /Users/raehyeon/data/wordpress
       o: bind
