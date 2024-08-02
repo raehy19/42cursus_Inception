@@ -3,22 +3,23 @@ FROM debian:bullseye
 
 # Install Tini, PHP, PHP extensions, and other dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends tini php7.4 php7.4-fpm php7.4-mysql curl wget less vim ca-certificates && \
+    apt-get install -y --no-install-recommends tini php7.4 php7.4-fpm php7.4-mysql curl wget less vim ca-certificates mariadb-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
 RUN mkdir -p /var/www/html /run/php
 
-# Download and extract WordPress directly into the target directory
-RUN curl -o latest.tar.gz https://wordpress.org/latest.tar.gz && \
-    tar -xzf latest.tar.gz -C /var/www/html --strip-components=1 && \
-    rm latest.tar.gz
+# Install WordPress CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x ./wp-cli.phar && \
+    mv wp-cli.phar /usr/bin/wp && \
+    wp cli update
 
-# Copy custom wp-config.php file
-COPY conf/wp-config.php /var/www/html/wp-config.php
+# Copy the initialization script
+COPY conf/init-wp.sh /usr/local/bin/init-wp.sh
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Make the initialization script executable
+RUN chmod +x /usr/local/bin/init-wp.sh
 
 # Modify php-fpm configuration to listen on port 9000
 RUN sed -i 's/\/run\/php\/php7.4-fpm.sock/0.0.0.0:9000/g' /etc/php/7.4/fpm/pool.d/www.conf
@@ -29,5 +30,5 @@ EXPOSE 9000
 # Use Tini as the init system
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
-# Command to run PHP-FPM
-CMD ["php-fpm7.4", "-F"]
+# Command to run the initialization script
+CMD ["/usr/local/bin/init-wp.sh"]
