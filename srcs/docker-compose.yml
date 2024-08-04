@@ -59,13 +59,11 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      #      device: /home/rjeong/data/mysql
-      device: /Users/raehyeon/data/mysql
+      device: /home/rjeong/data/mysql
       o: bind
   wordpressdata:
     driver: local
     driver_opts:
       type: none
-      #      device: /home/rjeong/data/wordpress
-      device: /Users/raehyeon/data/wordpress
+      device: /home/rjeong/data/wordpress
       o: bind
